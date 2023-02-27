@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscripcion</title>
+</head>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <title>Inscripcion de materias</title>
+</head>
+<body>
+    <div id="nav"></div>
+    <div class="container" id="app">
+        <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="card border-dark">
+                    <div class="card-header bg-dark text-white">INSCIPCION DE LAS MATERIAS</div>
+                    <div class="card-body">
+                        <form id="frmInscripcion" @submit.prevent="guardarMateria" @reset.prevent="nuevoMateria()">
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">MATERIAS:</div>
+                                <div class="col-9 col-md-3">
+                                    <input class="form-control" type="text" v-model="inscripcion.materia" name="txtMateriaInscripsion" id="txtMateriaInscripcion">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">GRUPOS:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text" v-model="inscripcion.grupo" name="txtGrupoInscripcion" id="txtGrupoInscrpcion">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col col-md-6">
+                                    <input class="btn btn-secondary" type="submit" value="Guardar Datos">
+                                </div>
+                                <div class="col col-md-6">
+                                    <input class="btn btn-danger" type="reset" value="Nuevo Registro">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script type="module">
+      import MyComponent from '/menu.js'
+      //const {createApp} = Vue;
+      createApp(MyComponent).mount('#nav')
+    </script> 
+    <script>
+        const {createApp} = Vue;
+        createApp({
+            data(){
+                return{
+                    db:'',
+                    buscar:'',
+                    accion: 'nuevo',
+                    inscripciones:[],
+                    inscripcion:{
+                        idMateria:'',
+                        materia:'',
+                        grupo:''
+                        
+                    }
+
+                }
+            },
+            methods:{
+                nuevoMateria(){
+                    this.accion = 'nuevo';
+                    this.inscripcion.idMateria = '';
+                    this.inscripcion.materia = '';
+                    this.inscripcion.grupo = '';
+                },
+                guardarMateria(){
+                    if(this.inscripcion.materia=='' || this.inscripcion.grupo==''){
+                        console.log('Por favor ingrese los datos correspondientes');
+                        return;
+                    }
+                    let store = this.abrirStore('tblmaterias','readwrite');
+                    if(this.accion==='nuevo'){
+                        this.inscripcion.idMateria = new Date().getTime().toString(16); //las cantidad milisegundo y lo convierte en hexadecimal
+                        
+                    }
+                    let query = store.put( JSON.parse( JSON.stringify(this.inscripcion)));
+                    query.onsuccess = resp=>{
+                        this.nuevoMateria();
+                        this.listar();
+                        alert("Los Materia ha sido guarda con EXITO");
+                    };
+                    query.onerror = err=>{
+                        console.error('ERROR al guardar alumno', err);
+                        alert("Los Datos ya existen");
+                    };
+                    
+                 },
+                
+               
+                listar(){
+                    let store = this.abrirStore('tblmaterias','readonly'),
+                        data = store.getAll();
+                        data.onsuccess = resp=>{
+                        this.inscripciones = data.result
+                    };
+                },
+                Login(){
+                    
+                    let store = this.abrirStore('tblmaterias','readonly')
+                    let request = store.openCursor();
+
+                
+                        request.onsuccess = function() {
+                        let cursor = request.result;
+                        if (cursor) {
+                            let key = cursor.key; 
+                            let value = cursor.value; 
+                            console.log(key, value);
+                            cursor.continue();
+                        } else {
+                            console.log("No hay más libros");
+                        }
+                        };
+                },
+                abrirBD(){
+                    let indexDB = indexedDB.open('db_sistema_academico',1);
+                    indexDB.onupgradeneeded = e=>{
+                    let req = e.target.result,
+                        tblmaterias = req.createObjectStore('tblmaterias',{keyPath: 'idMateria'});
+                        
+                        tblmaterias.createIndex('idMateria','idMateria',{unique:true});
+                        tblmaterias.createIndex('materia','materia',{unique:true});
+                    };
+                    indexDB.onsuccess = e=>{
+                    this.db = e.target.result;
+                    this.listar();
+                    };
+                    indexDB.onerror = e=>{
+                    console.error('ERROR al crear, abrir la BD',e);
+                    };
+            },
+            abrirStore(store,modo){
+                let ltx = this.db.transaction(store,modo);
+                return ltx.objectStore(store);
+            }
+            },
+            created(){
+                this.abrirBD();
+            }
+        }).mount('#app')
+    </script>
+    <br>
+</body>
+</html>
