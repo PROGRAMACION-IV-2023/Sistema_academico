@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <title>DOCENTES</title>
+</head>
+<body>
+  <div id="nav"></div>
+    <div class="container" id="app">
+        <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">REGISTRO DE DOCENTES</div>
+                    <div class="card-body">
+                        <form id="frmAlumno" @submit.prevent="guardardocente" @reset.prevent="nuevodocente()">
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">CODIGO:</div>
+                                <div class="col-9 col-md-3">
+                                    <input required pattern="^[US|SM]{2}[IS|LE]{2}[0-9]{6}" class="form-control" type="text" v-model="docente.codigo" name="txtCodigodocente" id="txtCodigodocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">NOMBRE:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text" v-model="docente.nombre" name="txtNombredocente" id="txtNombredocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">DIRECCION:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text"  v-model="docente.direccion" name="txtDirecciondocente"  id="txtDirecciondocente">
+                                </div>
+                             </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">MUNICIPIO:</div>
+                                <div class="col col-md-6">
+                                    <input class="form-control" v-model="docente.municipio" type="text" name="txtMunicipiodocente" id="txtMunicipiodocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">DEPARTAMENTO:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text"  v-model="docente.departamento" name="txtDepartamentodocente"  id="txtDepartamentodocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">TELEFONO:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text"  v-model="docente.telefono" name="txtTelefonodocente"  id="txtTelefonodocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">FECHA DE NACIMIENTO:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="date"  v-model="docente.fechan" name="txtFechaNdocente"  id="txtFechaNdocente">
+                                </div>
+                            </div>
+                            <div class="row p-1">
+                                <div class="col-3 col-md-2">SEXO:</div>
+                                <div class="col-9 col-md-6">
+                                    <input class="form-control" type="text"  v-model="docente.sexo" name="txtSexodocente"  id="txtSexodocente">
+                                </div>
+                            </div>
+
+                            <div class="row p-1">
+                                <div class="col col-md-6">
+                                    <input class="btn btn-primary" type="submit" value="Guardar registro">
+                                </div>
+                                <div class="col col-md-6">
+                                    <input class="btn btn-danger" type="reset" value="Nuevo registro">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+            <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="card text-bg-light">
+                    <div class="card-header">CONSULTA DE DOCENTES</div>
+                    <div class="card-body">
+                        <form>
+                            <table class="table table-white table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>BUSCAR:</th>
+                                        <th colspan="2"><input type="text" @keyup="listardocentes()" v-model="buscar" 
+                                            class="form-control" placeholder="Busar por nombre" ></th>
+                                    </tr>
+                                    <tr>
+                                        <th>CODIGO</th>
+                                        <th>NOMBRE</th>
+                                        <th>DIRECCION</th>
+                                        <th>MUNICIPIO</th>
+                                        <th>DEPARTAMENTO</th>
+                                        <th>TELEFONO</th>
+                                        <th>FECHA DE NACIMIENTO</th>
+                                        <th colspan="2">SEXO</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="docente in docentes" @click='modificardocente(docente)' :key="docente.iddocente">
+                                        <td>{{docente.codigo}}</td>
+                                        <td>{{docente.nombre}}</td>
+                                        <td>{{docente.direccion}}</td>
+                                        <td>{{docente.municipio}}</td>
+                                        <td>{{docente.departamento}}</td>
+                                        <td>{{docente.telefono}}</td>
+                                        <td>{{docente.fechan}}</td>
+                                        <td>{{docente.sexo}}</td>
+                                        <td><button @click.prevent="eliminardocente(docente)" class="btn btn-danger">Eliminar</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script type="module">
+      import MyComponent from '/login.js'
+      
+      createApp(MyComponent).mount('#nav')
+    </script>
+    <script>
+    const {createApp} = Vue;
+    createApp({
+    data(){
+      return{
+        db:'',
+          buscar:'',
+          docentes:[],
+          accion: 'nuevo',
+          alumno:{
+            iddocente:'',
+            codigo:'',
+            nombre:'',
+            direccion:'',
+            municipio:'',
+            departamento:'',
+            telefono:'',
+            nacimiento:'',
+            sexo:''
+          }
+      }
+    },
+    methods:{
+        nuevodocente(){
+          this.accion = 'nuevo';
+          this.docente.iddocente = '';
+          this.docente.codigo = '';
+          this.docente.nombre = '';
+          this.docente.direccion = '';
+          this.docente.municipio = '';
+          this.docente.departamento = '';
+          this.docente.telefono = '';
+          this.docente.nacimiento = '';
+          this.docente.sexo = '';
+        },
+        modificardocente(docente){
+          this.accion = 'modificar';
+          this.docente = docente;
+          
+        },
+        guardardocente(){
+          if(this.docente.nombre=='' || this.docente.codigo==''){
+            console.log('Por favor ingrese los datos correspondientes');
+            return;
+          }
+          let store = this.abrirStore('tbldocentes','readwrite');
+          if(this.accion==='nuevo'){
+            this.docente.iddocente = new Date().getTime().toString(16); 
+            
+          }
+          let query = store.put( JSON.parse( JSON.stringify(this.docente)));
+          query.onsuccess = resp=>{
+            this.nuevodocente();
+            this.listardocentes();
+          };
+          query.onerror = err=>{
+            console.error('ERROR al guardar docente', err);
+            alert(`Ya existe un docente con ese código: ${docente.codigo}?`);
+          };
+          
+        },
+        eliminardocente(docente){
+          if(confirm(`Esta seguro de eliminar el docente ${docente.nombre}?`)){
+            let store = this.abrirStore('tbldocentes','readwrite'),
+                req = store.delete(docente.iddocente);
+                req.onsuccess = res=>{
+                  this.listardocentes();
+                };
+                req.onerror = err=>{
+                  console.error('ERROR al guardar docente');
+                };
+          }
+        },
+        listardocentes(){
+          let store = this.abrirStore('tbldocentes','readonly'),
+              data = store.getAll();
+            data.onsuccess = resp=>{
+            this.docentes = data.result.filter(docente=>docente.nombre.toLowerCase().indexOf(this.buscar.toLowerCase())>-1 || docente.codigo.indexOf(this.buscar)>-1);
+          };
+        },
+        abrirBD(){
+        let indexDB = indexedDB.open('sistema_academico',1);
+        indexDB.onupgradeneeded = e=>{
+          let req = e.target.result,
+            tbldocentes = req.createObjectStore('tbldocentes',{keyPath: 'iddocente'}),
+            tblmaterias = req.createObjectStore('tblmaterias',{keyPath: 'idmateria'});
+            
+            tbldocentes.createIndex('iddocente','iddocente',{unique:true});
+            tbldocentes.createIndex('codigo','codigo',{unique:true});
+        };
+        indexDB.onsuccess = e=>{
+          this.db = e.target.result;
+          this.listardocentes();
+        };
+        indexDB.onerror = e=>{
+          console.error('ERROR al crear, abrir la BD',e);
+        };
+      },
+      abrirStore(store,modo){
+        let ltx = this.db.transaction(store,modo);
+        return ltx.objectStore(store);
+      }
+    },
+    created(){
+      this.abrirBD();
+      
+    }
+  }).mount('#app')
+    </script>
+</body>
+</html>
